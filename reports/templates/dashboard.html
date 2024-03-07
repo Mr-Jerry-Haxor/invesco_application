@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <h1>Dashboard</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="report_type">Report Type:</label>
+            <select id="report_type" name="report_type" required>
+                <option value="" selected disabled>Select a Report type</option>
+                {% for type in report_types %}
+                    <option value="{{ type.id }}">{{ type.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="date_range_start">Date Range Start:</label>
+            <input type="date" id="date_range_start" name="date_range_start" required>
+        </div>
+
+        <div class="form-group">
+            <label for="date_range_end">Date Range End:</label>
+            <input type="date" id="date_range_end" name="date_range_end" required>
+        </div>
+
+        <div class="form-group">
+            <label for="visualization_type">Visualization Type:</label>
+            <select id="visualization_type" name="visualization_type" required>
+                <option value="" selected disabled>Select a visualization type</option>
+                {% for type in visualization_types %}
+                    <option value="{{ type.id }}">{{ type.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <input type="submit" value="Generate Report">
+    </form>
+
+    {% if data_exists %}
+        <br>
+        <center>
+            <div id="chart"></div>
+
+            <script src="https://code.highcharts.com/highcharts.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var data = {{ data_json|safe }};
+                    var dates = data.map(function(item) { return item.Date; });
+                    var macd = data.map(function(item) { return item.MACD; });
+                    var signal = data.map(function(item) { return item.Signal; });
+                    var ema12 = data.map(function(item) { return item['12_EMA']; });
+                    var ema26 = data.map(function(item) { return item['26_EMA']; });
+
+                    Highcharts.chart('chart', {
+                        title: {
+                            text: 'MACD, Signal Line, and EMA'
+                        },
+                        xAxis: {
+                            categories: dates
+                        },
+                        series: [{
+                            name: 'MACD',
+                            data: macd
+                        }, {
+                            name: 'Signal Line',
+                            data: signal
+                        }, {
+                            name: '12-Day EMA',
+                            data: ema12
+                        }, {
+                            name: '26-Day EMA',
+                            data: ema26
+                        }]
+                    });
+                });
+            </script>
+        </center>
+        <br><br><br>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+        <style>
+            /* Custom CSS for DataTables */
+            .dataTables_wrapper .dataTables_paginate {
+                float: right;
+                text-align: right;
+                padding-top: 0.25em;
+            }
+            .dataTables_wrapper .dataTables_filter {
+                float: left;
+                text-align: left;
+            }
+        </style>
+        <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+
+        <table id="myTable">
+            <thead>
+                <tr>
+                    {% for column in data.columns %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data.itertuples %}
+                    <tr>
+                        {% for item in row %}
+                            <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <script>
+            $(document).ready( function () {
+                $('#myTable').DataTable({
+                    "pagingType": "full_numbers",  // Change pagination type
+                    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],  // Change length menu
+                    "searching": true,  // Enable or disable filtering
+                    "ordering": true,  // Enable or disable sorting
+                    "info": true  // Enable or disable table information
+                });
+            } );
+</script>
+    {% else %}
+        <p>No data available.</p>
+    {% endif %}
+
+    
+{% endblock %}
