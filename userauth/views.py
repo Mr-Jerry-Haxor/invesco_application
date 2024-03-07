@@ -20,3 +20,18 @@ class LoginUserView(FormView):
     def form_valid(self, form):
         login(self.request, form.get_user())
         return super().form_valid(form)
+    
+    
+    
+    
+from django.contrib.auth import logout
+from django.views.generic import RedirectView
+
+from django.contrib.auth import logout  # Import the logout function
+
+class LogoutView(RedirectView):
+    url = '/login/'  # Redirect to login page after logout
+
+    def get(self, request, *args, **kwargs):
+        logout(request)  # Call the logout function
+        return super().get(request, *args, **kwargs)
