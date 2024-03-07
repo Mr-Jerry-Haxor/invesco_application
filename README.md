@@ -1,10 +1,6 @@
 # invesco_application
 
 
-## Description
-
-Provide a brief description of your project here.
-
 ## Setup and Installation
 
 1. Clone the repository:
