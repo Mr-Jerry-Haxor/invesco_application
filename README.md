@@ -9,7 +9,6 @@
     ```
 
     ```
-
     cd  invesco_application
     ```
 
@@ -19,13 +18,11 @@
     ```
     
     ```
-    
     source env/bin/activate
     ```
     or
 
     ```
-
     "./env/Scripts/activate"
     ```
 
