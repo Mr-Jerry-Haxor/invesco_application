@@ -1,5 +1,12 @@
 # invesco_application
 
+## Prerequisites
+
+Before you begin, ensure you have met the following requirements:
+
+* You have installed the latest version of [Python](https://www.python.org/downloads/).
+* You have installed [Git Bash](https://github.com/git-for-windows/git/releases/download/v2.44.0.windows.1/Git-2.44.0-64-bit.exe).
+
 
 ## Setup and Installation
 
